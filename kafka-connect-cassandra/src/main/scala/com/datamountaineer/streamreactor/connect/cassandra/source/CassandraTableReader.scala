@@ -79,7 +79,7 @@ class CassandraTableReader(private val session: Session,
     val recoveredOffsets = OffsetHandler.recoverOffsets(offsetStorageKey, tables, context)
     val offset = OffsetHandler.recoverOffset[String](recoveredOffsets, offsetStorageKey, table, primaryKeyCol)
     offset.map(s => logger.info(s"Recovered offset $s"))
-    cqlGenerator.getDefaultOffsetValue(offset)
+    cqlGenerator.getOffsetOrDefault(offset)
   }
 
   /**
@@ -112,7 +112,7 @@ class CassandraTableReader(private val session: Session,
       null
     } else {
       // time based key column
-      val lowerBound = dateFormatter.parse(cqlGenerator.getDefaultOffsetValue(tableOffset).get)
+      val lowerBound = dateFormatter.parse(cqlGenerator.getOffsetOrDefault(tableOffset).get)
       // set the upper bound to now
       val upperBound = new Date()
       resultSetFutureToScala(bindAndFireQuery(lowerBound, upperBound))

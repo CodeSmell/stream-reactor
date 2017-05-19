@@ -52,7 +52,7 @@ class CqlGenerator(private val setting: CassandraSourceSetting) extends StrictLo
     selectStatement
   }
 
-  def getDefaultOffsetValue(offset: Option[String]): Option[String] = {
+  def getOffsetOrDefault(offset: Option[String]): Option[String] = {
     incrementMode.toUpperCase match {
       case "TIMESTAMP" | "TIMEUUID" => Some(offset.getOrElse(defaultTimestamp))
       case "TOKEN" => Some("")
